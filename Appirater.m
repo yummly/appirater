@@ -500,13 +500,13 @@ static BOOL _alwaysUseMainBundle = NO;
 - (void)incrementAndRate:(BOOL)canPromptForRating {
 	[self incrementUseCount];
 	
-	if (canPromptForRating &&
-        [self ratingConditionsHaveBeenMet] &&
-        [self ratingAlertIsAppropriate])
+	if (canPromptForRating)
 	{
         dispatch_async(dispatch_get_main_queue(),
                        ^{
+          if ([self ratingConditionsHaveBeenMet] && [self ratingAlertIsAppropriate]) {
                            [self showRatingAlert];
+          }
                        });
 	}
 }
@@ -515,12 +515,13 @@ static BOOL _alwaysUseMainBundle = NO;
 	[self incrementSignificantEventCount];
 	
     if (canPromptForRating &&
-        [self ratingConditionsHaveBeenMet] &&
-        [self ratingAlertIsAppropriate])
+        [self ratingConditionsHaveBeenMet])
 	{
         dispatch_async(dispatch_get_main_queue(),
                        ^{
+          if ([self ratingAlertIsAppropriate]) {
                            [self showRatingAlert];
+          }
                        });
 	}
 }
@@ -623,9 +624,21 @@ static BOOL _alwaysUseMainBundle = NO;
   }
 }
 
++ (UIWindow *)keyWindow {
+  NSArray *windows = UIApplication.sharedApplication.windows;
+  for (UIWindow *keywindow in windows) {
+    if (keywindow.isKeyWindow) {
+      return keywindow;
+    }
+  }
+  return nil;
+}
+
 + (id)getRootViewController {
-    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-    if (window.windowLevel != UIWindowLevelNormal) {
+
+  UIWindow *window = [Appirater keyWindow];
+
+  if (window.windowLevel != UIWindowLevelNormal) {
         NSArray *windows = [[UIApplication sharedApplication] windows];
         for(window in windows) {
             if (window.windowLevel == UIWindowLevelNormal) {
@@ -672,12 +685,9 @@ static BOOL _alwaysUseMainBundle = NO;
     [userDefaults setBool:YES forKey:kAppiraterRatedCurrentVersion];
     [userDefaults synchronize];
 	
-    // Use the built SKStoreReviewController if available (available from iOS 10.3 upwards)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
+    // Use the built SKStoreReviewController if available (available from iOS 14.3 upwards)
     if (NSStringFromClass([SKStoreReviewController class]) != nil) {
-        [SKStoreReviewController requestReview];
-#pragma clang diagnostic pop
+        [SKStoreReviewController requestReviewInScene:[Appirater keyWindow].windowScene];
         return;
     }
 
@@ -720,13 +730,6 @@ static BOOL _alwaysUseMainBundle = NO;
 		#endif
 	}
 }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    [self alertViewDidDismissWithButtonIndex:buttonIndex];
-}
-#pragma clang diagnostic pop
 
 - (void)alertViewDidDismissWithButtonIndex:(NSInteger)buttonIndex {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -780,7 +783,7 @@ static BOOL _alwaysUseMainBundle = NO;
 		[self setModalOpen:NO];
 		
 		// get the top most controller (= the StoreKit Controller) and dismiss it
-		UIViewController *presentingController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    UIViewController *presentingController = [Appirater keyWindow].rootViewController;
 		presentingController = [self topMostViewController: presentingController];
 		[presentingController dismissViewControllerAnimated:_usesAnimation completion:^{
             id <AppiraterDelegate> delegate = self.sharedInstance.delegate;

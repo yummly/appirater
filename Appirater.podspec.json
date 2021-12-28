@@ -1,8 +1,8 @@
 {
   "name": "Appirater",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "platforms": {
-    "ios": "5.0"
+    "ios": "14.0"
   },
   "summary": "A utility that reminds your iPhone app's users to review the app.",
   "homepage": "https://arashpayan.com/blog/2009/09/07/presenting-appirater/",
@@ -10,8 +10,8 @@
     "Arash Payan": "arash@ara.sh"
   },
   "source": {
-    "git": "https://github.com/arashpayan/appirater.git",
-    "tag": "2.3.0"
+    "git": "https://github.com/yummly/appirater",
+    "tag": "2.3.2"
   },
   "source_files": "*.{h,m}",
   "resource_bundles": {
