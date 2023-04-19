@@ -1,6 +1,6 @@
 {
   "name": "Appirater",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "platforms": {
     "ios": "14.0"
   },
@@ -10,13 +10,13 @@
     "Arash Payan": "arash@ara.sh"
   },
   "source": {
-    "git": "https://github.com/yummly/appirater",
-    "tag": "2.3.2"
+    "git": "https://github.com/yummly/appirater.git",
+    "tag": "2.3.3"
   },
-  "source_files": "*.{h,m}",
+  "source_files": "Sources/Appirater/*.{h,m}",
   "resource_bundles": {
     "Appirater": [
-      "*.lproj"
+      "Sources/Appirater/Resources/*.lproj"
     ]
   },
   "requires_arc": true,
